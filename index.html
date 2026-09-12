@@ -537,7 +537,7 @@ setTimeout(function(){var s=document.getElementById('splash-screen');if(s){s.sty
       <div class="admin-tab" onclick="adminTab('roles',this)">🛡️ الرتب</div>
       <div class="admin-tab" onclick="adminTab('rooms',this)">🏠 الغرف</div>
       <div class="admin-tab" onclick="adminTab('emojis',this)">😄 الإيموجيات</div>
-      <div class="admin-tab" onclick="adminTab('reports',this)">🚨 الإبلاغات</div>
+      <div class="admin-tab" onclick="adminTab('reports',this)">?? الإبلاغات</div>
       <div class="admin-tab" onclick="adminTab('logs',this)">📋 السجلات</div>
       <div class="admin-tab" onclick="adminTab('bans',this)">⛔ الحظر</div>
       <div class="admin-tab" onclick="adminTab('announce',this)">📢 إعلان</div>
@@ -602,7 +602,7 @@ function timeAgo(ts){var d=new Date(ts),now=new Date(),diff=Math.floor((now-d)/1
 function beep(f){try{var c=new(window.AudioContext||window.webkitAudioContext)();var o=c.createOscillator();var g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;g.gain.setValueAtTime(.15,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.4);o.start();o.stop(c.currentTime+.4);}catch(e){}}
 function compressImg(file,cb,maxW){maxW=maxW||400;if(file.type==='image/gif'){var r=new FileReader();r.onload=function(e){cb(e.target.result);};r.readAsDataURL(file);return;}var reader=new FileReader();reader.onload=function(e){var img=new Image();img.onload=function(){var canvas=document.createElement('canvas');var w=img.width,h=img.height;if(w>maxW){h=Math.max(1,(maxW/w)*h);w=maxW;}canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);cb(canvas.toDataURL('image/jpeg',0.4));};img.src=e.target.result;};reader.readAsDataURL(file);}
 function defPrefs(u){var d={allowMedia:true,readReceipts:true,showLastSeen:true,msgRequests:true,dark:true,smooth:true,sndOwn:false,sndOther:true,sndNotif:true,friends:[],blocked:[],mediaBlock:{},pinned:[],is_active:true,banned:false};for(var k in u){d[k]=u[k];}return d;}
-function isOnline(u){return u&&u.online===true&&(Date.now()-(u.lastSeen||0))<70000;}
+function isOnline(u){return u&&u.online===true&&(Date.now()-(u.lastSeen||0))<120000;}
 function role(u){if(!u)return'عضو';if(u.name===OWNER_NAME)return'👑 صاحب الموقع';return u.role||'عضو';}
 function isAdmin(){return me&&(me.name===OWNER_NAME||role(me).indexOf('إدارة')>-1||role(me).indexOf('سوبر')>-1);}
 function isOwner(){return me&&me.name===OWNER_NAME;}
@@ -648,8 +648,8 @@ async function register(){var n=el('rName').value.trim(),p=el('rPass').value;if(
 async function enter(u){me=u;LS.setItem('rom_session',u.name);me.online=true;me.lastSeen=Date.now();usersCache[me.name]=me;await saveUsers(me.name);el('loginModal').classList.add('hide');applyPrefsUI();updateProfile();await sbLoadConvs();startAll();startHeartbeat();toast('أهلاً بيك يا '+getMsgName(u.name)+' 💕');}
 async function logout(){if(heartTimer){clearInterval(heartTimer);heartTimer=null;}if(me){me.online=false;me.lastSeen=Date.now();usersCache[me.name]=me;try{await sb.from('users').upsert({name:me.name,data:me});}catch(e){}}LS.removeItem('rom_session');location.reload();}
 function startHeartbeat(){if(heartTimer)clearInterval(heartTimer);heartTimer=setInterval(function(){if(!me)return;me.lastSeen=Date.now();me.online=true;saveUsers(me.name);scheduleOnlineRender();},25000);}
-function markOfflineSync(){if(!me)return;try{fetch(SB_URL+'/rest/v1/users?name=eq.'+encodeURIComponent(me.name),{method:'PATCH',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({data:Object.assign({},me,{online:false,lastSeen:Date.now()})}),keepalive:true});}catch(e){}}
-window.addEventListener('pagehide',markOfflineSync);
+document.addEventListener('visibilitychange',function(){if(me&&document.visibilityState==='visible'){me.lastSeen=Date.now();me.online=true;saveUsers(me.name);scheduleOnlineRender();}});
+window.addEventListener('focus',function(){if(me){me.lastSeen=Date.now();me.online=true;saveUsers(me.name);scheduleOnlineRender();}});
 function startAll(){renderOnline();renderRooms();refreshConvs();applyTextColors();checkAnnounce();customEmojis=DB.read('emojis',[])||[];loadStickers();scItems=DB.read('shortcuts',[])||[];renderShortcuts();}
 
 /* ---------- التنقل ---------- */
