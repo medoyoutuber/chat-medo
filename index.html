@@ -274,6 +274,12 @@ setTimeout(function(){var s=document.getElementById('splash-screen');if(s){s.sty
   </div>
 </div></div>
 
+<div class="modal" id="gameInviteModal"><div class="m-card2">
+  <h3>⚔️ تحدي إكس أو!</h3>
+  <p style="font-size:13px;text-align:center"><b id="giFrom" style="color:var(--acc)"></b> يتحداك في لعبة إكس أو 🔥</p>
+  <button style="background:var(--grn);color:#fff" onclick="acceptInvite()">✅ قبول التحدي</button>
+  <button style="background:var(--red);color:#fff" onclick="declineInvite()">❌ إلغاء التحدي</button>
+</div></div>
 <div class="modal" id="reportModal"><div class="m-card2">
   <h3>🚨 إبلاغ الإدارة</h3>
   <p style="font-size:12px;color:var(--mut)">العضو: <b id="repTarget" style="color:var(--acc)"></b></p>
@@ -292,7 +298,7 @@ setTimeout(function(){var s=document.getElementById('splash-screen');if(s){s.sty
   <div class="ig"><label>رسالة الترحيب</label><input id="roomWelcome" placeholder="أهلاً بيكم في الغرفة"></div>
   <div class="ig"><label>كلمة السر (اختياري)</label><input id="roomPass" type="password" placeholder="اتركه فاضي للغرفة العامة"></div>
   <button style="background:var(--acc);color:#fff" onclick="createRoom()">✅ إنشاء الغرفة</button>
-  <button style="background:transparent;color:var(--red);border:1px solid var(--red)!important" onclick="closeModal('roomModal')">❌ إلغاء</button>
+  <button style="background:transparent;color:var(--red);border:1px solid var(--red)!important" onclick="closeModal('roomModal');resetRoomModal()">❌ إلغاء</button>
 </div></div>
 
 <div class="modal" id="userModal"><div class="m-card2">
@@ -360,7 +366,7 @@ setTimeout(function(){var s=document.getElementById('splash-screen');if(s){s.sty
 
 <div class="content">
   <div class="screen active" id="s-online"><div id="usersList"></div></div>
-  <div class="screen" id="s-rooms"><div id="roomsList"></div><div id="createRoomBtn" class="hide" style="margin-top:10px"><button class="lbtn" onclick="openModal('roomModal')">➕ إنشاء غرفة جديدة</button></div></div>
+  <div class="screen" id="s-rooms"><div id="roomsList"></div><div id="createRoomBtn" class="hide" style="margin-top:10px"><button class="lbtn" onclick="resetRoomModal();openModal('roomModal')">➕ إنشاء غرفة جديدة</button></div></div>
   <div class="screen" id="s-chat"><div class="chat-win">
     <div class="chat-head">
       <span class="back-wrap"><button class="back-btn" onclick="history.back()">➔</button><span id="backDot" class="rdot hide"></span></span>
@@ -443,6 +449,7 @@ setTimeout(function(){var s=document.getElementById('splash-screen');if(s){s.sty
       <div class="m-item" onclick="go('sound')"><span>🔊 الصوت والإشعارات</span><span>👈</span></div>
       <div class="m-item" onclick="go('textcolor')"><span>🎨 لون النص والاسم</span><span>👈</span></div>
       <div class="m-item" id="frameMenuItem" onclick="go('frames')" style="display:none"><span>🖼️ إطار الصورة</span><span>👈</span></div>
+      <div class="m-item" onclick="go('gaming')"><span>🎮 جيمنج</span><span>👈</span></div>
     </div>
     <div class="menu-list"><div class="m-item" onclick="openAdmin()"><span>⚡ لوحة تحكم الموقع</span><span>👈</span></div></div>
     <button class="logout" onclick="logout()">🚪 تسجيل خروج</button>
@@ -499,6 +506,25 @@ setTimeout(function(){var s=document.getElementById('splash-screen');if(s){s.sty
       <button class="adm-btn red" onclick="setFrame(null)">🗑️ إزالة</button>
     </div>
   </div>
+  <div class="screen" id="s-gaming">
+    <div class="sub-title" onclick="go('settings')">➔ الجيمنج</div>
+    <div id="gamingHome">
+      <div class="r-card" onclick="openGame('xo')"><div class="r-icon">❌⭕</div><div style="flex:1"><div style="font-weight:bold">لعبة إكس أو</div><div style="font-size:11px;color:var(--mut)">تحدى أصدقائك المتصلين</div></div><span style="color:var(--grn);font-size:12px;font-weight:bold">العب الآن</span></div>
+      <div class="r-card" style="opacity:.5"><div class="r-icon">🎲</div><div style="flex:1"><div style="font-weight:bold">لعبة لودو</div><div style="font-size:11px;color:var(--mut)">قريبًا...</div></div><span style="color:var(--mut);font-size:12px">قريبًا</span></div>
+    </div>
+    <div id="xoLobby" class="hide">
+      <div class="sub-title" onclick="closeGameLobby()">➔ رجوع للالعاب</div>
+      <div class="adm-sec"><h4>🎯 اختار لاعب لتتحديه</h4><div id="gamePlayersList"></div></div>
+    </div>
+    <div id="xoBoardWrap" class="hide">
+      <div class="sub-title" onclick="leaveGame()">➔ خروج من اللعبة</div>
+      <div class="adm-sec" style="text-align:center">
+        <h4 id="xoStatus" style="font-size:15px">—</h4>
+        <div id="xoBoard" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:290px;margin:0 auto"></div>
+        <button class="adm-btn red" style="margin-top:12px" onclick="leaveGame()">🚪 انسحاب من المباراة</button>
+      </div>
+    </div>
+  </div>
   <div class="screen" id="s-textcolor">
     <div class="sub-title" onclick="go('settings')">➔ لون النص والاسم</div>
     <div class="set-row" style="display:block">
@@ -546,7 +572,7 @@ setTimeout(function(){var s=document.getElementById('splash-screen');if(s){s.sty
     <div class="admin-panel open" id="ap-shortcuts"><div class="adm-sec"><h4>⌨️ اختصارات الشات السريعة</h4><div class="adm-row"><input id="scKey" placeholder="الرمز (س1)" style="width:35%"><input id="scVal" placeholder="النص الكامل"></div><button class="adm-btn" id="scSaveBtn" onclick="addShortcut()">حفظ الاختصار</button><button class="adm-btn red" id="scCancelEdit" onclick="cancelEditShortcut()" style="display:none">إلغاء التعديل</button><table><thead><tr><th>الرمز</th><th>النص</th><th>تحكم</th></tr></thead><tbody id="scTable"></tbody></table></div></div>
     <div class="admin-panel" id="ap-members"><div class="adm-sec"><h4>👥 قائمة الأعضاء</h4><div class="adm-row"><input id="memSearch" placeholder="ابحث عن عضو..." oninput="renderMembers()"></div><table><thead><tr><th>العضو</th><th>الرتبة</th><th>الدولة</th><th>تحكم</th></tr></thead><tbody id="memTable"></tbody></table></div></div>
     <div class="admin-panel" id="ap-roles"><div class="adm-sec"><h4>🛡️ إدارة الرتب والترقيات</h4><div class="adm-row"><input id="roleUser" placeholder="اسم العضو" style="flex:1"><select id="roleSelect" style="flex:1;padding:8px;background:var(--card2);border:1px solid var(--line);color:var(--txt);border-radius:6px"><option value="عضو">عضو</option><option value="🛡️ إدارة">🛡️ إدارة</option><option value="⭐ سوبر">⭐ سوبر</option></select></div><button class="adm-btn" onclick="assignRole()">✅ ترقية</button><table style="margin-top:12px"><thead><tr><th>العضو</th><th>الرتبة</th><th>تحكم</th></tr></thead><tbody id="roleTable"></tbody></table></div></div>
-    <div class="admin-panel" id="ap-rooms"><div class="adm-sec"><h4>🏠 إدارة الغرف</h4><div id="adminRoomsList"></div></div></div>
+    <div class="admin-panel" id="ap-rooms"><div class="adm-sec"><h4>🏠 إدارة الغرف</h4><input type="file" id="roomImgInput2" accept="image/*" style="display:none" onchange="saveRoomImg(event)"><div id="adminRoomsList"></div></div></div>
     <div class="admin-panel" id="ap-emojis"><div class="adm-sec"><h4>😄 إدارة الإيموجيات والـ GIF</h4><div class="adm-row"><input id="emojiUrl" placeholder="رابط GIF أو صورة"><button class="adm-btn" onclick="addEmoji()">➕ رابط</button></div><div class="adm-row"><input type="file" id="emojiFile" accept="image/*,.gif"><button class="adm-btn" onclick="document.getElementById('emojiFile').click();addEmojiFileListen()">📁 رفع ملف</button></div><div class="emoji-grid" id="emojiGrid"></div></div></div>
     <div class="admin-panel" id="ap-reports"><div class="adm-sec"><h4>🚨 الإبلاغات الواردة</h4><div id="reportsList"></div></div></div>
     <div class="admin-panel" id="ap-logs"><div class="adm-sec"><h4>📋 سجل النشاطات</h4><div id="activityLog"></div></div></div>
@@ -923,12 +949,17 @@ async function joinRoom(rid){try{if(!(scItems&&scItems.length)){var _r=await sb.
   await subMsgs();}
 function previewRoomImg(e){var f=e.target.files[0];if(!f)return;compressImg(f,function(dataUrl){pendingRoomImg=dataUrl;el('roomImgLabel').innerHTML='<img src="'+dataUrl+'" style="width:100%;height:100%;object-fit:cover;border-radius:10px">';});}
 async function createRoom(){if(!isAdmin()&&!isSuper()&&!isOwner())return toast('ممنوع إنشاء غرف');var name=el('roomName').value.trim();if(!name)return toast('اكتب اسم الغرفة');
-  var rid='room_'+Date.now();
+  if(editingRoomId){var _er=null;for(var _i=0;_i<allRooms.length;_i++)if(allRooms[_i].id===editingRoomId){_er=allRooms[_i];break;}if(_er){_er.name=name;_er.desc=el('roomDesc').value.trim();_er.welcome=el('roomWelcome').value.trim();_er.pass=el('roomPass').value.trim()||null;if(pendingRoomImg)_er.img=pendingRoomImg;try{await sb.from('rooms').upsert({id:_er.id,data:_er});if(_er.welcome)await sb.from('msgs').upsert({id:'sys_'+_er.id,conv:_er.id,sender:'نظام',data:_er.welcome,type:'system',time:Date.now(),reactions:{}});}catch(e){}toast('تم تحديث الغرفة ✅');}closeModal('roomModal');resetRoomModal();renderRooms();renderRoomsAdmin();return;}var rid='room_'+Date.now();
   var roomData={id:rid,name:name,desc:el('roomDesc').value.trim(),welcome:el('roomWelcome').value.trim(),pass:el('roomPass').value.trim()||null,createdBy:me.name,created:Date.now(),img:pendingRoomImg||null};
   allRooms.push(roomData);try{await sb.from('rooms').upsert({id:rid,data:roomData});if(roomData.welcome)await sb.from('msgs').upsert({id:'sys_'+rid,conv:rid,sender:'نظام',data:roomData.welcome,type:'system',time:Date.now(),reactions:{}});}catch(e){}
-  toast('تم إنشاء الغرفة');closeModal('roomModal');el('roomName').value='';el('roomDesc').value='';el('roomWelcome').value='';el('roomPass').value='';pendingRoomImg=null;el('roomImgLabel').innerHTML='📷<input type="file" id="roomImg" accept="image/*" style="display:none" onchange="previewRoomImg(event)">';logActivity('room',me.name+' أنشأ غرفة '+name);renderRooms();}
+  toast('تم إنشاء الغرفة');closeModal('roomModal');resetRoomModal();logActivity('room',me.name+' أنشأ غرفة '+name);renderRooms();}
 function deleteRoom(id){if(!isAdmin())return;if(!confirm('حذف الغرفة؟'))return;allRooms=allRooms.filter(function(r){return r.id!==id;});try{sb.from('rooms').delete().eq('id',id);sb.from('msgs').delete().eq('conv',id);}catch(e){}toast('تم الحذف');renderRooms();if(el('s-admin').classList.contains('active'))renderRoomsAdmin();}
-function renderRoomsAdmin(){var html='';for(var i=0;i<allRooms.length;i++){var r=allRooms[i];var imgPrev=r.img?'<img src="'+r.img+'" style="width:40px;height:40px;border-radius:8px;object-fit:cover">':'💬';html+='<div class="room-card">'+imgPrev+'<div style="flex:1"><div style="font-weight:bold">'+escapeHtml(r.name)+'</div><div style="font-size:11px;color:var(--mut)">'+(r.desc||'')+' • بواسطة: '+(r.createdBy||'')+'</div></div><button class="xbtn" onclick="deleteRoom(\''+r.id+'\')">حذف</button></div>';}el('adminRoomsList').innerHTML=html||'<div style="text-align:center;color:var(--mut);padding:20px">لا توجد غرف</div>';}
+function renderRoomsAdmin(){var html='';for(var i=0;i<allRooms.length;i++){var r=allRooms[i];var imgPrev=r.img?'<img src="'+r.img+'" style="width:40px;height:40px;border-radius:8px;object-fit:cover">':'💬';html+='<div class="room-card">'+imgPrev+'<div style="flex:1"><div style="font-weight:bold">'+escapeHtml(r.name)+'</div><div style="font-size:11px;color:var(--mut)">'+(r.desc||'')+' • بواسطة: '+(r.createdBy||'')+'</div></div><button class="xbtn" onclick="deleteRoom(\''+r.id+'\')">حذف</button> <button class="ebtn" onclick="editRoom(\''+r.id+'\')">✏️ تعديل</button> <button class="ubtn" onclick="changeRoomImg(\''+r.id+'\')">📷 صورة</button></div>';}el('adminRoomsList').innerHTML=html||'<div style="text-align:center;color:var(--mut);padding:20px">لا توجد غرف</div>';}
+var editingRoomId=null,roomImgTarget=null;
+function resetRoomModal(){editingRoomId=null;el('roomName').value='';el('roomDesc').value='';el('roomWelcome').value='';el('roomPass').value='';pendingRoomImg=null;el('roomImgLabel').innerHTML='📷<input type="file" id="roomImg" accept="image/*" style="display:none" onchange="previewRoomImg(event)">';var t=document.querySelector('#roomModal h3');if(t)t.innerText='🏠 إنشاء غرفة جديدة';var b=document.querySelector('#roomModal button[onclick="createRoom()"]');if(b)b.innerText='✅ إنشاء الغرفة';}
+function editRoom(id){var r=null;for(var i=0;i<allRooms.length;i++)if(allRooms[i].id===id){r=allRooms[i];break;}if(!r)return;editingRoomId=id;el('roomName').value=r.name||'';el('roomDesc').value=r.desc||'';el('roomWelcome').value=r.welcome||'';el('roomPass').value=r.pass||'';pendingRoomImg=null;el('roomImgLabel').innerHTML='📷<input type="file" id="roomImg" accept="image/*" style="display:none" onchange="previewRoomImg(event)">';var t=document.querySelector('#roomModal h3');if(t)t.innerText='✏️ تعديل الغرفة';var b=document.querySelector('#roomModal button[onclick="createRoom()"]');if(b)b.innerText='💾 تحديث الغرفة';openModal('roomModal');}
+function changeRoomImg(id){roomImgTarget=id;var fi=el('roomImgInput2');if(!fi)return toast('افتح لوحة التحكم من الإعدادات');fi.value='';fi.click();}
+function saveRoomImg(e){var f=e.target.files[0];if(!f||!roomImgTarget)return;var rid=roomImgTarget;compressImg(f,function(dataUrl){var r=null;for(var i=0;i<allRooms.length;i++)if(allRooms[i].id===rid){r=allRooms[i];break;}if(!r)return;r.img=dataUrl;sb.from('rooms').upsert({id:r.id,data:r}).then(function(){toast('تم تحديث صورة الغرفة ✅');renderRooms();renderRoomsAdmin();}).catch(function(){toast('تعذر الحفظ');});},600);}
 
 /* ---------- حائط الإبداع ---------- */
 function toggleWallForm(){var f=el('wallForm');f.style.display=f.style.display==='none'?'block':'none';}
@@ -983,7 +1014,41 @@ function renderSite(){var s=DB.read('site',{});siteSettings.blockLinks=s.blockLi
 function saveSiteSetting(k,v){var s=DB.read('site',{});s[k]=v;DB.write('site',s);siteSettings[k]=v;}
 function saveBadWords(){var words=el('badWords').value.split('\n').map(function(w){return w.trim();}).filter(function(w){return w;});badWordsList=words;saveSiteSetting('bannedWords',words);toast('تم الحفظ');}
 
-/* ---------- Realtime: التحديث الفوري ---------- */
+/* ---------- الجيمنج: إكس أو أونلاين ---------- */
+var gameInvite=null,pendingWait=null,myGame=null,xoState=null,xoMySym=null;
+function openGame(g){if(g!=='xo')return toast('اللعبة دي قريبًا 😄');el('gamingHome').classList.add('hide');el('xoLobby').classList.remove('hide');renderGamePlayers();}
+function closeGameLobby(){el('xoLobby').classList.add('hide');el('gamingHome').classList.remove('hide');}
+function renderGamePlayers(){var html='',any=false;for(var k in usersCache){var u=usersCache[k];if(!u||u.is_active===false||u.banned)continue;if(me&&u.name===me.name)continue;if(!isOnline(u))continue;if(isBlockedByMe(u.name))continue;any=true;var esc=k.replace(/'/g,"\\'");html+='<div class="u-card" onclick="sendChallenge(\''+esc+'\')">'+getAvatarHTML(u,40)+'<div style="flex:1"><div class="u-name" style="font-size:14px">'+styleName(u)+'</div><div style="font-size:11px;color:var(--grn)">متصل الآن — اضغط للتحدّي</div></div><button class="adm-btn grn">⚔️ تحدي</button></div>';}
+el('gamePlayersList').innerHTML=html||'<div class="empty" style="padding:30px 10px"><div class="big">🎮</div>مفيش لاعبين متصلين دلوقتي</div>';}
+async function sendChallenge(target){if(!me)return toast('سجل دخولك الأول');var id='g'+Date.now()+Math.random().toString(36).slice(2,6);var inv={id:id,game:'xo',from:me.name,to:target,time:Date.now(),status:'pending'};try{await sb.from('kv').upsert({key:'ginvite_'+id,value:inv});}catch(e){return toast('تعذر إرسال التحدي — تأكد من الاتصال');}toast('⚔️ بعت تحدي لـ '+getMsgName(target)+'... استنى الرد');pendingWait={id:id,to:target};setTimeout(function(){if(pendingWait&&pendingWait.id===id){toast('⌛ '+getMsgName(target)+' مردش على التحدي');pendingWait=null;}},60000);}
+function handleGameInvite(v,ev){
+  if(!v||!me||ev==='DELETE')return;
+  if(v.to===me.name&&v.status==='pending'){if(Date.now()-(v.time||0)>90000)return;if(gameInvite&&gameInvite.id===v.id)return;gameInvite=v;el('giFrom').innerText=getMsgName(v.from);openModal('gameInviteModal');beep(900);}
+  else if(v.from===me.name&&v.status==='declined'&&pendingWait&&pendingWait.id===v.id){toast('😢 '+getMsgName(v.to)+' رفض التحدي');pendingWait=null;}
+  else if(v.from===me.name&&v.status==='accepted'&&pendingWait&&pendingWait.id===v.id){startXo(v.id,v.from,v.to);}}
+async function acceptInvite(){if(!gameInvite)return;var v=gameInvite;closeModal('gameInviteModal');gameInvite=null;v.status='accepted';try{await sb.from('kv').upsert({key:'ginvite_'+v.id,value:v});}catch(e){}
+  var st={id:v.id,board:['','','','','','','','',''],turn:v.from,p1:v.from,p2:v.to,over:false,winner:null,time:Date.now()};
+  try{await sb.from('kv').upsert({key:'gxo_'+v.id,value:st});}catch(e){}
+  startXo(v.id,v.from,v.to);}
+function declineInvite(){if(!gameInvite)return;var v=gameInvite;closeModal('gameInviteModal');gameInvite=null;v.status='declined';try{sb.from('kv').upsert({key:'ginvite_'+v.id,value:v});}catch(e){}toast('تم إلغاء التحدي');}
+function startXo(gid,p1,p2){pendingWait=null;myGame={id:gid,p1:p1,p2:p2};xoMySym=(me.name===p1)?'X':'O';go('gaming',null);el('gamingHome').classList.add('hide');el('xoLobby').classList.add('hide');el('xoBoardWrap').classList.remove('hide');
+  xoState=null;paintXo();
+  sb.from('kv').select('value').eq('key','gxo_'+gid).maybeSingle().then(function(r){if(r&&!r.error&&r.data&&r.data.value){xoState=r.data.value;}else{xoState={id:gid,board:['','','','','','','','',''],turn:p1,p1:p1,p2:p2,over:false,winner:null};}paintXo();}).catch(function(){});}
+function paintXo(){var b=el('xoBoard');if(!b||!myGame)return;if(!xoState){el('xoStatus').innerText='جاري تحضير المباراة...';b.innerHTML='';return;}
+  var html='';for(var i=0;i<9;i++){var c=xoState.board[i];var locked=(xoState.over||!!c||xoState.turn!==me.name);html+='<div onclick="xoPlay('+i+')" style="aspect-ratio:1;background:var(--card2);border:1px solid var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:42px;font-weight:bold;cursor:'+(locked?'default':'pointer')+';color:'+(c==='X'?'var(--acc)':'#64b5f6')+'">'+(c||'')+'</div>';}
+  b.innerHTML=html;
+  var st=el('xoStatus');
+  if(xoState.over){st.innerText=xoState.winner==='draw'?'تعادل! 🤝':('الفائز: '+getMsgName(xoState.winner)+' 🏆');}
+  else if(xoState.turn===me.name){st.innerText='✅ دورك ('+xoMySym+')';}
+  else{st.innerText='⏳ دور '+getMsgName(xoState.turn);}}
+async function xoPlay(i){if(!xoState||xoState.over||xoState.turn!==me.name||xoState.board[i])return;
+  xoState.board[i]=xoMySym;
+  var w=xoCheck(xoState.board);
+  if(w){xoState.over=true;xoState.winner=(w==='draw')?'draw':(w==='X'?xoState.p1:xoState.p2);}
+  else{var full=true;for(var j=0;j<9;j++)if(!xoState.board[j]){full=false;break;}if(full){xoState.over=true;xoState.winner='draw';}else{xoState.turn=(me.name===xoState.p1)?xoState.p2:xoState.p1;}}
+  xoState.time=Date.now();paintXo();
+  try{await sb.from('kv').upsert({key:'gxo_'+xoState.id,value:xoState});}catch(e){toast('تعذر إرسال الحركة');}}
+function xoCheck(b){var L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4
 function handleMsgEvent(p){
   var row=p.new;var ev=p.eventType||p.type;
   if(!row||!row.conv)return;
@@ -1028,6 +1093,8 @@ function startRealtime(){
     else if(k&&k.indexOf('typing_')===0){showTypingFrom(row.value);}
     else if(k==='site'){var s=kvCache.site||{};siteSettings.blockLinks=!!s.blockLinks;badWordsList=s.bannedWords||badWordsList;}
     else if(k==='shortcuts'){scItems=kvCache.shortcuts||[];if(el('s-admin').classList.contains('active'))renderShortcuts();}
+    else if(k&&k.indexOf('ginvite_')===0){handleGameInvite(row.value,p.eventType);}
+    else if(k&&k.indexOf('gxo_')===0){handleXoUpdate(row.value);}
   }).subscribe();
   }catch(e){}
 }
@@ -1050,4 +1117,4 @@ fillCountries();
 })();
 </script>
 </body>
-                                             </html>
+  </html>
